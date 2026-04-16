@@ -5,9 +5,8 @@ export async function POST(req: Request) {
   try {
     const { message } = await req.json();
 
-    // This part checks if the key exists before trying to use it
     if (!process.env.GEMINI_API_KEY) {
-      return Response.json({ reply: "DEBUG: The GEMINI_API_KEY is missing from Vercel settings!" });
+      return Response.json({ reply: "DEBUG: GEMINI_API_KEY missing in Vercel." });
     }
 
     const google = createGoogleGenerativeAI({
@@ -15,13 +14,13 @@ export async function POST(req: Request) {
     });
 
     const { text } = await generateText({
-      model: google('gemini-1.5-flash'),
+      // We add 'models/' to the front to fix the 'Not Found' error
+      model: google('models/gemini-1.5-flash'),
       prompt: message,
     });
 
     return Response.json({ reply: text });
   } catch (error: any) {
-    // This will now show the REAL error from Google (like 'Invalid Key' or 'Quota Exceeded')
     return Response.json({ reply: `Google Error: ${error.message}` });
   }
 }
