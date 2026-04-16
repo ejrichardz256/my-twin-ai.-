@@ -1,29 +1,19 @@
-import { NextResponse } from 'next/server';
+import { openai } from '@ai-sdk/openai';
+import { generateText } from 'ai';
 
 export async function POST(req: Request) {
   try {
     const { message } = await req.json();
 
-    const res = await fetch('https://openai.com', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: message }],
-      }),
+    const { text } = await generateText({
+      model: openai('gpt-4o-mini'),
+      prompt: message,
+      apiKey: process.env.OPENAI_API_KEY,
     });
 
-    const data = await res.json();
-    
-    if (data.error) {
-      return NextResponse.json({ reply: `OpenAI Error: ${data.error.message}` });
-    }
-
-    return NextResponse.json({ reply: data.choices[0].message.content });
+    return Response.json({ reply: text });
   } catch (error) {
-    return NextResponse.json({ reply: "System Error: Connection failed. Check Vercel logs." });
+    console.error(error);
+    return Response.json({ reply: "Connection failed. Make sure your OpenAI key has credits!" });
   }
 }
