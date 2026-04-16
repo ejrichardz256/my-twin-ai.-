@@ -10,14 +10,13 @@ export async function POST(req: Request) {
     });
 
     const { text } = await generateText({
-      // Changing to the most stable base model name
-      model: google('gemini-pro'), 
+      model: google('models/gemini-1.5-flash'), 
       prompt: message,
     });
 
     return Response.json({ reply: text });
   } catch (error: any) {
     console.error(error);
-    return Response.json({ reply: "Twin connection error. Check Vercel logs!" });
+    return Response.json({ reply: "Twin connection error. Please try again in a moment." });
   }
 }
