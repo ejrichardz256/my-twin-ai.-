@@ -7,13 +7,15 @@ export async function POST(req: Request) {
 
     const { text } = await generateText({
       model: openai('gpt-4o-mini'),
+      system: 'You are a helpful AI twin.',
       prompt: message,
-      apiKey: process.env.OPENAI_API_KEY,
     });
 
     return Response.json({ reply: text });
-  } catch (error) {
-    console.error(error);
-    return Response.json({ reply: "Connection failed. Make sure your OpenAI key has credits!" });
+  } catch (error: any) {
+    console.error('Build/Runtime Error:', error);
+    return Response.json({ 
+      reply: "Connection failed. Verify your OpenAI Key in Vercel and check your billing balance." 
+    });
   }
 }
