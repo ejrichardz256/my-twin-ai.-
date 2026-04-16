@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateText } from 'ai';
 
