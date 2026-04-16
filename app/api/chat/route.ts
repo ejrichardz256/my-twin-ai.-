@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
 
 export async function POST(req: Request) {
@@ -6,16 +6,13 @@ export async function POST(req: Request) {
     const { message } = await req.json();
 
     const { text } = await generateText({
-      model: openai('gpt-4o-mini'),
-      system: 'You are a helpful AI twin.',
+      model: google('gemini-1.5-flash'),
       prompt: message,
+      apiKey: process.env.GEMINI_API_KEY, // Matches your Vercel name
     });
 
     return Response.json({ reply: text });
-  } catch (error: any) {
-    console.error('Build/Runtime Error:', error);
-    return Response.json({ 
-      reply: "Connection failed. Verify your OpenAI Key in Vercel and check your billing balance." 
-    });
+  } catch (error) {
+    return Response.json({ reply: "Gemini error. Check Vercel keys!" });
   }
 }
