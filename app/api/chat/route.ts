@@ -10,13 +10,14 @@ export async function POST(req: Request) {
     });
 
     const { text } = await generateText({
-      model: google('gemini-1.5-flash-8b'), 
+      // Using the stable version string that works globally
+      model: google('gemini-1.5-flash-latest'),
       prompt: message,
     });
 
     return Response.json({ reply: text });
   } catch (error: any) {
     console.error(error);
-    return Response.json({ reply: "Twin connection error. Still waking up!" });
+    return Response.json({ reply: "Connection failed. Checking model availability..." });
   }
 }
