@@ -1,4 +1,3 @@
-export const runtime = 'edge';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateText } from 'ai';
 
@@ -6,12 +5,15 @@ export async function POST(req: Request) {
   try {
     const { message } = await req.json();
 
-    // 1. This is the PROVIDER format (defining the key separately)
+    // This part checks if the key exists before trying to use it
+    if (!process.env.GEMINI_API_KEY) {
+      return Response.json({ reply: "DEBUG: The GEMINI_API_KEY is missing from Vercel settings!" });
+    }
+
     const google = createGoogleGenerativeAI({
       apiKey: process.env.GEMINI_API_KEY,
     });
 
-    // 2. Now the model uses that provider
     const { text } = await generateText({
       model: google('gemini-1.5-flash'),
       prompt: message,
@@ -19,8 +21,7 @@ export async function POST(req: Request) {
 
     return Response.json({ reply: text });
   } catch (error: any) {
-    return Response.json({ reply: "Twin offline. Check Vercel keys!" });
+    // This will now show the REAL error from Google (like 'Invalid Key' or 'Quota Exceeded')
+    return Response.json({ reply: `Google Error: ${error.message}` });
   }
 }
-	
-
