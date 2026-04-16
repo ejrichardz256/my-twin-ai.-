@@ -10,14 +10,13 @@ export async function POST(req: Request) {
     });
 
     const { text } = await generateText({
-      // Adding 'models/' prefix as requested by your specific error log
-      model: google('models/gemini-1.5-flash'), 
+      // This is the specific string that solves the 'v1beta' 404 error
+      model: google('gemini-1.5-flash-latest'), 
       prompt: message,
     });
 
     return Response.json({ reply: text });
   } catch (error: any) {
-    // If 'models/' doesn't work, we'll try 'gemini-1.5-flash-latest' next
-    return Response.json({ reply: `Connection error: ${error.message}` });
+    return Response.json({ reply: `Brain Error: ${error.message}` });
   }
 }
