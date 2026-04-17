@@ -1,59 +1,54 @@
-"use client";
+'use client';
 import { useState } from 'react';
 
-export default function Home() {
+export default function Chat() {
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState([{ role: 'system', content: 'Twin Online. Ready for mission.' }]);
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
 
-  const handleSend = async () => {
-    const userMsg = { role: 'user', content: input };
-    setMessages([...messages, userMsg]);
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+    const newMessages = [...messages, { role: 'user', content: input }];
+    setMessages(newMessages);
     setInput('');
-    
-    // This is where we call your API (Logic Lobe)
+
     const res = await fetch('/api/chat', {
       method: 'POST',
       body: JSON.stringify({ message: input }),
     });
     const data = await res.json();
-    setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
+    setMessages([...newMessages, { role: 'twin', content: data.reply }]);
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', background: '#0a0a0a', color: '#fff' }}>
-      {/* Sidebar: Memory Vault */}
-      <div style={{ width: '250px', borderRight: '1px solid #333', padding: '20px' }}>
-        <h3>Memory Vault</h3>
-        <p style={{ fontSize: '12px', color: '#888' }}>Syncing with Mobile...</p>
-        <ul style={{ listStyle: 'none', padding: 0, fontSize: '14px' }}>
-          <li>✓ Preference: Direct Tone</li>
-          <li>✓ Location: Active</li>
-        </ul>
+    <div className="flex flex-col h-screen bg-[#0f172a] text-slate-200 font-sans">
+      <header className="p-4 border-b border-slate-700 bg-[#1e293b] shadow-xl">
+        <h1 className="text-xl font-bold text-blue-400 tracking-tight">EJ // DIGITAL TWIN</h1>
+      </header>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.map((m, i) => (
+          <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[80%] p-3 rounded-2xl shadow-md ${
+              m.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-[#334155] text-slate-100 rounded-tl-none border border-slate-600'
+            }`}>
+              {m.content}
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Main Chat Area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <header style={{ padding: '20px', borderBottom: '1px solid #333' }}>
-          <h2>AI Twin: Mission Control</h2>
-        </header>
-        
-        <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
-          {messages.map((m, i) => (
-            <div key={i} style={{ marginBottom: '15px', color: m.role === 'user' ? '#0070f3' : '#fff' }}>
-              <strong>{m.role === 'user' ? 'You: ' : 'Twin: '}</strong>{m.content}
-            </div>
-          ))}
-        </div>
-
-        <div style={{ padding: '20px', borderTop: '1px solid #333', display: 'flex' }}>
-          <input 
-            value={input} 
+      <div className="p-4 bg-[#1e293b] border-t border-slate-700">
+        <div className="flex gap-2 max-w-4xl mx-auto">
+          <input
+            className="flex-1 p-3 rounded-xl bg-[#0f172a] border border-slate-600 focus:outline-none focus:border-blue-500 transition-all"
+            value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            style={{ flex: 1, padding: '12px', borderRadius: '8px', background: '#222', border: '1px solid #444', color: '#fff' }} 
-            placeholder="Give a command..." 
+            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+            placeholder="Talk to EJ's Twin..."
           />
-          <button onClick={handleSend} style={{ marginLeft: '10px', padding: '10px 20px', background: '#0070f3', borderRadius: '8px', border: 'none', color: '#fff' }}>Send</button>
+          <button onClick={sendMessage} className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-xl font-bold transition-colors">
+            SEND
+          </button>
         </div>
       </div>
     </div>
