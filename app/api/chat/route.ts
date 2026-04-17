@@ -1,3 +1,4 @@
+cat << 'EOF' > ~/my-twin-web/app/api/chat/route.ts
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateText } from 'ai';
 
@@ -10,13 +11,13 @@ export async function POST(req: Request) {
     });
 
     const { text } = await generateText({
-      // This is the specific model designed for the v1beta path
-      model: google('gemini-1.5-flash-8b'), 
+      model: google('models/gemini-1.5-flash-latest'),
       prompt: message,
     });
 
     return Response.json({ reply: text });
   } catch (error: any) {
-    return Response.json({ reply: `System Error: ${error.message}` });
+    return Response.json({ reply: `Twin Status: ${error.message}` });
   }
 }
+EOF
