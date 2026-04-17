@@ -10,8 +10,8 @@ export async function POST(req: Request) {
     });
 
     const { text } = await generateText({
-      // This is the specific string that solves the 'v1beta' 404 error
-      model: google('gemini-1.5-flash-latest'), 
+      // Switching to the most compatible model name for v1beta
+      model: google('gemini-pro'), 
       prompt: message,
     });
 
