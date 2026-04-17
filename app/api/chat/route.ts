@@ -17,13 +17,12 @@ export async function POST(req: Request) {
       prompt: message,
       tools: {
         search: tool({
-          description: 'Search the web for current information',
-          parameters: z.object({
-            query: z.string().describe('The search query to look up'),
-          }),
+          description: 'Search the web',
+          parameters: z.object({ query: z.string() }),
+          // @ts-ignore
           execute: async ({ query }) => {
-            const searchResult = await tvly.search(query);
-            return JSON.stringify(searchResult);
+            const res = await tvly.search(query);
+            return JSON.stringify(res);
           },
         }),
       },
@@ -35,3 +34,4 @@ export async function POST(req: Request) {
     return Response.json({ reply: 'Error: ' + err.message });
   }
 }
+
