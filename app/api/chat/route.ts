@@ -1,17 +1,32 @@
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { generateText } from 'ai';
+import { generateText, tool } from 'ai';
+import { tavily } from '@tavily/core';
 
 export const runtime = 'edge';
+
+const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY });
 
 export async function POST(req: Request) {
   try {
     const { message } = await req.json();
     const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
+
     const { text } = await generateText({
       model: google('gemini-2.5-flash'),
-      system: 'You are the Digital Twin of [EJ]. You are helpful, intelligent, and represent your creator in a cool, modern way. If asked who you are, explain that you are his digital representative.',
+      system: 'You are the Digital Twin of [YOUR NAME]. Use the search tool to find live info.',
       prompt: message,
+      tools: {
+        search: tool({
+          description: 'Search the web for live news and info',
+          parameters: (z) => z.object({ query: z.string() }),
+          execute: async ({ query }) => {
+            const result = await tvly.search(query);
+            return result;
+          },
+        }),
+      },
     });
+
     return Response.json({ reply: text });
   } catch (err: any) {
     return Response.json({ reply: 'Error: ' + err.message });
