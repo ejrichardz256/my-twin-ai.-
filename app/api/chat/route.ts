@@ -11,24 +11,26 @@ export async function POST(req: Request) {
     const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
     const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY || '' });
 
-    const { text } = await generateText({
+    const result = await generateText({
       model: google('gemini-2.5-flash'),
       system: 'You are a Digital Twin. Use the search tool for live info.',
       prompt: message,
       tools: {
         search: tool({
-          description: 'Search the web',
-          parameters: z.object({ query: z.string() }),
-          execute: async ({ query }: { query: string }) => {
-            const res = await tvly.search(query);
-            return JSON.stringify(res);
+          description: 'Search the web for current information',
+          parameters: z.object({
+            query: z.string().describe('The search query to look up'),
+          }),
+          execute: async ({ query }) => {
+            const searchResult = await tvly.search(query);
+            return JSON.stringify(searchResult);
           },
         }),
       },
       maxSteps: 5,
     });
 
-    return Response.json({ reply: text });
+    return Response.json({ reply: result.text });
   } catch (err: any) {
     return Response.json({ reply: 'Error: ' + err.message });
   }
