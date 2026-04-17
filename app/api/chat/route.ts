@@ -6,11 +6,11 @@ export async function POST(req: Request) {
     const { message } = await req.json();
     const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
     const { text } = await generateText({
-      model: google('gemini-pro'),
+      model: google('models/gemini-1.5-flash'),
       prompt: message,
     });
     return Response.json({ reply: text });
   } catch (error: any) {
-    return Response.json({ reply: 'Twin Status: ' + error.message });
+    return Response.json({ reply: 'Status: ' + error.message });
   }
 }
