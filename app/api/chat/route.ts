@@ -24,7 +24,6 @@ export async function POST(req: Request) {
           }
         }),
       },
-      maxSteps: 3,
     });
 
     return Response.json({ reply: result.text });
