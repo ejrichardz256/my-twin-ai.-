@@ -1,9 +1,9 @@
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateText, tool } from 'ai';
+import { z } from 'zod';
 import { tavily } from '@tavily/core';
 
 export const runtime = 'edge';
-
 const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY });
 
 export async function POST(req: Request) {
@@ -13,18 +13,16 @@ export async function POST(req: Request) {
 
     const { text } = await generateText({
       model: google('gemini-2.5-flash'),
-      system: 'You are the Digital Twin of [YOUR NAME]. Use the search tool to find live info.',
+      system: 'You are the Digital Twin of your creator. Use search for live info.',
       prompt: message,
       tools: {
         search: tool({
-          description: 'Search the web for live news and info',
-          parameters: (z) => z.object({ query: z.string() }),
-          execute: async ({ query }) => {
-            const result = await tvly.search(query);
-            return result;
-          },
+          description: 'Search the web',
+          parameters: z.object({ query: z.string() }),
+          execute: async ({ query }) => await tvly.search(query),
         }),
       },
+      maxSteps: 5,
     });
 
     return Response.json({ reply: text });
