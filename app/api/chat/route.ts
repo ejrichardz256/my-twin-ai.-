@@ -3,8 +3,6 @@ import { generateText, tool } from 'ai';
 import { z } from 'zod';
 import { tavily } from '@tavily/core';
 
-export const runtime = 'edge';
-
 export async function POST(req: Request) {
   try {
     const { message } = await req.json();
