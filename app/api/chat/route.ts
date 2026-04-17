@@ -1,16 +1,14 @@
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { generateText } from 'ai';
 
 export async function POST(req: Request) {
   try {
-    const { message } = await req.json();
-    const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
-    const { text } = await generateText({
-      model: google('models/gemini-1.5-flash-8b'),
-      prompt: message,
-    });
-    return Response.json({ reply: text });
+    const response = await fetch(
+      `https://googleapis.com${process.env.GEMINI_API_KEY}`
+    );
+    const data = await response.json();
+    const names = data.models ? data.models.map((m: any) => m.name) : 'No models found';
+    return Response.json({ reply: 'Supported Models: ' + JSON.stringify(names) });
   } catch (error: any) {
-    return Response.json({ reply: 'Status: ' + error.message });
+    return Response.json({ reply: 'Error listing models: ' + error.message });
   }
 }
