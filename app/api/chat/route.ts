@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
     const result = await generateText({
       model: google('gemini-2.0-flash'),
-      system: 'You are the Digital Twin of EJ. Use search for live info.',
+      system: 'You are EJ’s Digital Twin. Speak in a luxury gold style. Use search for live info.',
       prompt: message,
       tools: {
         search: tool({
