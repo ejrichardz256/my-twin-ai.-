@@ -10,8 +10,7 @@ export async function POST(req: Request) {
     });
 
     const { text } = await generateText({
-      // Switching to the most compatible model name for v1beta
-      model: google('gemini-pro'), 
+      model: google('models/gemini-1.5-flash'), 
       prompt: message,
     });
 
