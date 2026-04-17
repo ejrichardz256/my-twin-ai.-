@@ -6,13 +6,11 @@ import { tavily } from '@tavily/core';
 export async function POST(req: Request) {
   try {
     const { message } = await req.json();
-    const google = createGoogleGenerativeAI({
-      apiKey: process.env.GEMINI_API_KEY,
-    });
+    const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
+    const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY || '' });
 
     const result = await generateText({
-      // We remove 'models/' to see if it finds the stable v1 path
-      model: google('gemini-1.5-flash'), 
+      model: google('gemini-2.0-flash-001'),
       system: 'You are the Digital Twin of EJ. Use search for live info.',
       prompt: message,
       tools: {
