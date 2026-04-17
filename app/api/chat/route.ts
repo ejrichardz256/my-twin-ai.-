@@ -9,6 +9,7 @@ export async function POST(req: Request) {
     const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
     const { text } = await generateText({
       model: google('gemini-2.5-flash'),
+      system: 'You are the Digital Twin of [YOUR NAME]. You are helpful, intelligent, and represent your creator in a cool, modern way. If asked who you are, explain that you are his digital representative.',
       prompt: message,
     });
     return Response.json({ reply: text });
