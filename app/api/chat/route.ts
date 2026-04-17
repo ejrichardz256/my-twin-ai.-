@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY || '' });
 
     const result = await generateText({
-      model: google('gemini-2.0-flash'),
+      model: google('models/gemini-1.5-flash-8b'),
       system: 'You are the Digital Twin of EJ. Use search for live info.',
       prompt: message,
       tools: {
@@ -25,6 +25,6 @@ export async function POST(req: Request) {
 
     return Response.json({ reply: result.text });
   } catch (err: any) {
-    return Response.json({ reply: 'Error: ' + err.message });
+    return Response.json({ reply: 'Status: ' + err.message });
   }
 }
