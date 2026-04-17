@@ -10,12 +10,13 @@ export async function POST(req: Request) {
     });
 
     const { text } = await generateText({
-      model: google('models/gemini-1.5-flash'), 
+      // This is the specific model designed for the v1beta path
+      model: google('gemini-1.5-flash-8b'), 
       prompt: message,
     });
 
     return Response.json({ reply: text });
   } catch (error: any) {
-    return Response.json({ reply: `Brain Error: ${error.message}` });
+    return Response.json({ reply: `System Error: ${error.message}` });
   }
 }
