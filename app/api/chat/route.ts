@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       search: tool({
         description: 'web search',
         parameters: z.object({ query: z.string() }),
-        execute: async ({ query }) => JSON.stringify(await tvly.search(query)),
+        execute: async (args: any) => JSON.stringify(await tvly.search(args.query)),
       }),
     },
     maxSteps: 3,
