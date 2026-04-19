@@ -20,15 +20,13 @@ export async function POST(req: Request) {
         search: tool({
           description: 'Search the web',
           parameters: z.object({ query: z.string() }),
-          // @ts-ignore
           execute: async ({ query }: { query: string }) => {
             const res = await tvly.search(query);
             return res;
           },
         } as any),
-      },
-      maxSteps: 5,
-    });
+      }
+    } as any);
 
     return Response.json({ reply: text });
   } catch (err: any) {
