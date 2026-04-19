@@ -1,31 +1,36 @@
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateText, tool } from 'ai';
-import { z } from 'zod';
 import { tavily } from '@tavily/core';
+import { z } from 'zod';
+
+export const runtime = 'edge';
+
+const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY || '' });
 
 export async function POST(req: Request) {
   try {
     const { message } = await req.json();
     const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
-    const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY || '' });
 
-    const result = await generateText({
-      model: google('gemini-2.0-flash'),
-      system: 'You are the Digital Twin of EJ. Speak in a luxury gold style. Use search for live info.',
+    const { text } = await generateText({
+      model: google('gemini-1.5-flash'),
+      system: 'You are an AI Twin. Use search for real-time info.',
       prompt: message,
       tools: {
         search: tool({
-          description: 'web search',
+          description: 'Search the web',
           parameters: z.object({ query: z.string() }),
-          // @ts-ignore
-          execute: async ({ query }) => JSON.stringify(await tvly.search(query)),
+          execute: async ({ query }) => {
+            const res = await tvly.search(query);
+            return res;
+          },
         }),
       },
+      maxSteps: 5,
     });
 
-    return Response.json({ reply: result.text });
+    return Response.json({ reply: text });
   } catch (err: any) {
-    return Response.json({ reply: 'Status: ' + err.message });
+    return Response.json({ reply: 'Error: ' + err.message });
   }
 }
- 
