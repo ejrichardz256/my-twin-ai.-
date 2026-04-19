@@ -11,13 +11,13 @@ export async function POST(req: Request) {
 
     const { text } = await generateText({
       model: google('gemini-1.5-flash'),
-      system: 'You are an AI Twin. Use search for real-time info.',
+      system: 'You are an AI Twin. Use search for live info.',
       prompt: message,
       tools: {
         search: tool({
           description: 'Search the web',
           parameters: z.object({ query: z.string() }),
-          execute: async ({ query }) => {
+          execute: async ({ query }: any) => {
             const response = await fetch('https://tavily.com', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -28,9 +28,8 @@ export async function POST(req: Request) {
             });
             return await response.json();
           },
-        }),
+        } as any),
       },
-      maxSteps: 5,
     } as any);
 
     return Response.json({ reply: text });
