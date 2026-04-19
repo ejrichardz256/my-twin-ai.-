@@ -10,8 +10,8 @@ export async function POST(req: Request) {
     const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
 
     const { text } = await generateText({
-      model: google('gemini-1.5-flash'),
-      system: 'You are an AI Twin. Use search for live info.',
+      model: google('gemini-2.0-flash-001'),
+      system: 'You are the Digital Twin of [YOUR NAME]. Use search for real-time info.',
       prompt: message,
       tools: {
         search: tool({
