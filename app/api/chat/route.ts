@@ -1,11 +1,8 @@
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateText, tool } from 'ai';
-import { tavily } from '@tavily/core';
 import { z } from 'zod';
 
 export const runtime = 'edge';
-
-const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY || '' });
 
 export async function POST(req: Request) {
   try {
@@ -20,12 +17,20 @@ export async function POST(req: Request) {
         search: tool({
           description: 'Search the web',
           parameters: z.object({ query: z.string() }),
-          execute: async ({ query }: { query: string }) => {
-            const res = await tvly.search(query);
-            return res;
+          execute: async ({ query }) => {
+            const response = await fetch('https://tavily.com', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                api_key: process.env.TAVILY_API_KEY,
+                query,
+              }),
+            });
+            return await response.json();
           },
-        } as any),
-      }
+        }),
+      },
+      maxSteps: 5,
     } as any);
 
     return Response.json({ reply: text });
