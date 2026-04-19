@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY || '' });
 
     const result = await generateText({
-      model: google('gemini-1.5-flash-latest'),
+      model: google.languageModel('gemini-2.0-flash'),
       system: 'You are the Digital Twin of EJ. Speak in a luxury gold style. Use search for live info.',
       prompt: message,
       tools: {
