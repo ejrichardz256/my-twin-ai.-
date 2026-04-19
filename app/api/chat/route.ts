@@ -20,8 +20,8 @@ export async function POST(req: Request) {
         search: tool({
           description: 'Search the web',
           parameters: z.object({ query: z.string() }),
-          execute: async ({ query }) => {
-            const res = await tvly.search(query);
+          execute: async (args) => {
+            const res = await tvly.search(args.query);
             return res;
           },
         }),
