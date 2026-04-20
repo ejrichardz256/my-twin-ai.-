@@ -10,11 +10,11 @@ export async function POST(req: Request) {
     const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
     const { text } = await generateText({
       model: google('gemini-2.5-flash'),
-      system: 'You are Ej. ALWAYS use the search tool for sports scores or live news. Do not guess.',
+      system: 'You are Ej. You have access to a search tool. For any real-time info like sports scores, you MUST use the search tool before answering.',
       prompt: message,
       tools: {
         search: tool({
-          description: 'Search the web',
+          description: 'Search the web for live scores and news',
           parameters: z.object({ query: z.string() }),
           execute: async ({ query }: any) => {
             const res = await fetch('https://tavily.com', {
