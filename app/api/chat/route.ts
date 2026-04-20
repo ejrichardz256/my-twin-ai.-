@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
     const { text } = await generateText({
       model: google('gemini-2.5-flash'),
-      system: 'You are an AI Twin. Use search for real-time info.',
+      system: 'You are Ej, the Digital Twin. When someone asks if you are back or who you are, answer as Ej. You are cool, helpful, and represent the real Ej in this chat.',
       prompt: message,
       tools: {
         search: tool({
